@@ -3,802 +3,619 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PyStudio - Python Web IDE</title>
-    
+    <title>SiberKalkan Jr. - Teknofest Anti-Panel & RAT Koruma Portalı</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter & JetBrains Mono) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                        },
-                        darkbg: '#0f172a',
-                        darkcard: '#1e293b',
-                        darkborder: '#334155'
+                        cyber: {
+                            bg: '#0a0f1d',
+                            card: '#111827',
+                            border: '#1f2937',
+                            primary: '#00f2fe',
+                            secondary: '#4facfe',
+                            accent: '#10b981',
+                            danger: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace']
                     }
                 }
             }
         }
     </script>
-
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- CodeMirror Editor CSS & JS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/eclipse.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/closebrackets.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/edit/matchbrackets.min.js"></script>
-
-    <!-- Pyodide WebAssembly Engine -->
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
-
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
-        
         body {
-            font-family: 'Inter', sans-serif;
+            background-color: #080c17;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 242, 254, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(79, 172, 254, 0.08) 0px, transparent 50%);
         }
-        
-        .font-mono {
-            font-family: 'Fira Code', monospace;
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.15);
         }
-
-        .CodeMirror {
-            height: 100% !important;
-            font-family: 'Fira Code', monospace;
-            font-size: 14px;
-            line-height: 1.6;
-            border-radius: 0.5rem;
+        .glow-effect-danger {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
         }
-
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
-            height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
+            background: #0d1322;
         }
         ::-webkit-scrollbar-thumb {
-            background: #475569;
-            border-radius: 3px;
+            background: #1f2937;
+            border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #64748b;
-        }
-
-        .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .pulse-glow {
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.3);
+            background: #00f2fe;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased overflow-hidden">
+<body class="text-slate-200 font-sans min-h-screen flex flex-col justify-between">
 
-    <header class="h-16 border-b border-slate-800 bg-slate-900/90 px-4 flex items-center justify-between z-20">
-        <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                <i class="fa-brands fa-python text-2xl text-slate-950"></i>
+    <!-- Navigation / Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-cyan-500/20">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-white leading-none tracking-wide">SiberKalkan <span class="text-cyan-400 text-sm font-normal">Jr.</span></h1>
+                    <p class="text-xs text-slate-400">Teknofest 2026 Siber Güvenlik Projesi</p>
+                </div>
             </div>
-            <div>
-                <h1 class="font-bold text-lg leading-tight bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">PyStudio IDE</h1>
-                <p class="text-xs text-slate-400 flex items-center gap-1.5">
-                    <span id="py-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                    <span id="py-status-text">Python Motoru Yükleniyor...</span>
-                </p>
+            
+            <div class="flex items-center gap-3">
+                <span class="hidden sm:inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Sistem Aktif & Korumada
+                </span>
+                <span class="bg-slate-800 text-xs px-2.5 py-1 rounded-lg text-slate-300 border border-slate-700">
+                    <i class="fa-solid fa-users text-cyan-400 mr-1"></i> Ekip: 9-A Güvenlik
+                </span>
             </div>
-        </div>
-
-        <!-- Action Controls -->
-        <div class="flex items-center space-x-2 sm:space-x-3">
-            <button id="run-btn" disabled onclick="runPythonCode()" class="flex items-center space-x-2 px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium text-sm transition shadow-lg shadow-emerald-600/20 cursor-pointer">
-                <i class="fa-solid fa-play text-xs" id="run-icon"></i>
-                <span id="run-btn-text">Çalıştır (Ctrl+Enter)</span>
-            </button>
-            <button onclick="clearOutput()" class="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer" title="Çıktıyı Temizle">
-                <i class="fa-solid fa-trash-can text-sm"></i>
-            </button>
-            <button onclick="copyCode()" class="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition cursor-pointer" title="Kodu Kopyala">
-                <i class="fa-regular fa-copy text-sm"></i>
-            </button>
-            <button onclick="toggleSidebar()" class="p-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 md:hidden transition cursor-pointer" title="Menü">
-                <i class="fa-solid fa-bars text-sm"></i>
-            </button>
         </div>
     </header>
 
-    <div class="flex-1 flex overflow-hidden relative">
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8">
 
-        <!-- Sidebar / Examples & Tools -->
-        <aside id="sidebar" class="w-80 bg-slate-900 border-r border-slate-800 flex flex-col absolute md:relative z-10 h-full transition-transform duration-300 -translate-x-full md:translate-x-0">
-            <!-- Sidebar Navigation Tabs -->
-            <div class="flex border-b border-slate-800 bg-slate-900/50 p-1 gap-1 text-xs font-medium">
-                <button onclick="switchSidebarTab('examples')" id="tab-btn-examples" class="flex-1 py-2 rounded-md bg-slate-800 text-emerald-400 flex items-center justify-center gap-1.5 cursor-pointer">
-                    <i class="fa-solid fa-code"></i> Örnekler
-                </button>
-                <button onclick="switchSidebarTab('packages')" id="tab-btn-packages" class="flex-1 py-2 rounded-md text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 cursor-pointer">
-                    <i class="fa-solid fa-box-open"></i> Paketler
-                </button>
-                <button onclick="switchSidebarTab('cheatsheet')" id="tab-btn-cheatsheet" class="flex-1 py-2 rounded-md text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 cursor-pointer">
-                    <i class="fa-solid fa-book"></i> Rehber
-                </button>
-            </div>
-
-            <!-- Tab Content: Examples -->
-            <div id="tab-examples" class="flex-1 overflow-y-auto p-3 space-y-2">
-                <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2 py-1">Hazır Kod Şablonları</p>
-                <div id="examples-list" class="space-y-1.5">
-                    <!-- Dynamic Examples Injected Here -->
-                </div>
-            </div>
-
-            <!-- Tab Content: Packages -->
-            <div id="tab-packages" class="flex-1 overflow-y-auto p-4 space-y-4 hidden">
-                <div>
-                    <h3 class="text-sm font-semibold text-slate-200 mb-1">Pyodide Kütüphane Yükleyici</h3>
-                    <p class="text-xs text-slate-400">Numpy, Pandas, Matplotlib vb. paketleri tarayıcıya ekleyin.</p>
-                </div>
-                <div class="flex gap-2">
-                    <input type="text" id="pkg-input" placeholder="Örn: numpy, pandas" class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
-                    <button onclick="installPackage()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-xs font-medium rounded-lg text-white transition cursor-pointer">Yükle</button>
-                </div>
-                <div>
-                    <p class="text-xs font-medium text-slate-400 mb-2">Yüklü / Desteklenen Popüler Paketler:</p>
-                    <div class="flex flex-wrap gap-1.5" id="installed-pkg-tags">
-                        <span class="px-2 py-1 rounded bg-slate-800 text-xs text-emerald-400 border border-slate-700">math (Yerleşik)</span>
-                        <span class="px-2 py-1 rounded bg-slate-800 text-xs text-emerald-400 border border-slate-700">random (Yerleşik)</span>
-                        <span class="px-2 py-1 rounded bg-slate-800 text-xs text-slate-300 border border-slate-700">matplotlib</span>
-                        <span class="px-2 py-1 rounded bg-slate-800 text-xs text-slate-300 border border-slate-700">numpy</span>
-                        <span class="px-2 py-1 rounded bg-slate-800 text-xs text-slate-300 border border-slate-700">pandas</span>
+        <!-- Welcome & Anti-Panic Banner -->
+        <section class="bg-gradient-to-r from-blue-900/40 via-slate-900 to-slate-900 border border-cyan-500/30 rounded-2xl p-6 relative overflow-hidden glow-effect">
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+                <div class="space-y-2 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-cyan-500/10 text-cyan-400 text-xs font-semibold uppercase tracking-wider">
+                        <i class="fa-solid fa-circle-info"></i> Korkmana ya da Panik Yapmana Gerek Yok!
                     </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Verilerin veya ailen tehdit mi ediliyor?</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Siber zorbalar ve panelciler çocukları korkutarak panik yaratmaya çalışırlar. Unutma, kurdukları baskıların %99'u blöftür! Aşağıdaki mini testi çöz, sistemini tara ve yapay zekâ danışmanımıza sorularını sor.
+                    </p>
                 </div>
-            </div>
-
-            <!-- Tab Content: Cheatsheet -->
-            <div id="tab-cheatsheet" class="flex-1 overflow-y-auto p-4 space-y-3 text-xs text-slate-300 hidden">
-                <div class="p-3 bg-slate-800/50 rounded-lg border border-slate-800 space-y-1">
-                    <div class="font-semibold text-emerald-400">Yazdırma & Girdi</div>
-                    <code class="block text-slate-300 font-mono">print("Merhaba Dünya!")</code>
-                    <code class="block text-slate-300 font-mono">ad = input("İsminiz: ")</code>
-                </div>
-                <div class="p-3 bg-slate-800/50 rounded-lg border border-slate-800 space-y-1">
-                    <div class="font-semibold text-emerald-400">Döngüler & Liste</div>
-                    <code class="block text-slate-300 font-mono">for i in range(5): print(i)</code>
-                    <code class="block text-slate-300 font-mono">sayilar = [1, 2, 3, 4, 5]</code>
-                </div>
-                <div class="p-3 bg-slate-800/50 rounded-lg border border-slate-800 space-y-1">
-                    <div class="font-semibold text-emerald-400">Fonksiyon Tanımlama</div>
-                    <code class="block text-slate-300 font-mono">def kare(x):<br>&nbsp;&nbsp;&nbsp;&nbsp;return x * x</code>
-                </div>
-            </div>
-        </aside>
-
-        <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
-            
-            <!-- Code Editor Box -->
-            <div class="flex-1 flex flex-col h-1/2 md:h-full border-b md:border-b-0 md:border-r border-slate-800 relative">
-                <!-- Editor Bar -->
-                <div class="h-10 bg-slate-900/80 px-4 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                    <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-file-code text-emerald-400"></i>
-                        <span class="font-medium text-slate-200">main.py</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span id="editor-line-col">Satır: 1, Sütun: 1</span>
-                        <button onclick="resetEditor()" class="hover:text-slate-200 transition cursor-pointer" title="Kodu Sıfırla">
-                            <i class="fa-solid fa-rotate-left"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Code Mirror Container -->
-                <div class="flex-1 relative overflow-hidden bg-[#282a36]">
-                    <textarea id="code-editor"></textarea>
-                </div>
-            </div>
-
-            <!-- Output Panel & Tabs -->
-            <div class="flex-1 flex flex-col h-1/2 md:h-full bg-slate-950 overflow-hidden">
-                <!-- Output Navigation Tabs -->
-                <div class="h-10 bg-slate-900/80 px-2 border-b border-slate-800 flex items-center justify-between">
-                    <div class="flex space-x-1 text-xs">
-                        <button onclick="switchOutputTab('console')" id="out-tab-console" class="px-3 py-1.5 rounded-md bg-slate-800 text-emerald-400 font-medium flex items-center gap-1.5 cursor-pointer">
-                            <i class="fa-solid fa-terminal"></i> Terminal Çıktısı
-                        </button>
-                        <button onclick="switchOutputTab('plot')" id="out-tab-plot" class="px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200 font-medium flex items-center gap-1.5 cursor-pointer">
-                            <i class="fa-solid fa-chart-line"></i> Grafik & Görsel
-                            <span id="plot-badge" class="w-2 h-2 rounded-full bg-emerald-500 hidden"></span>
-                        </button>
-                        <button onclick="switchOutputTab('vars')" id="out-tab-vars" class="px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200 font-medium flex items-center gap-1.5 cursor-pointer">
-                            <i class="fa-solid fa-cube"></i> Değişkenler
-                        </button>
-                    </div>
-                    <div id="exec-time" class="text-xs text-slate-500 pr-2 hidden">
-                        <i class="fa-regular fa-clock"></i> <span>0.00s</span>
-                    </div>
-                </div>
-
-                <!-- Console Panel Content -->
-                <div id="panel-console" class="flex-1 p-4 font-mono text-sm overflow-y-auto bg-slate-950 text-slate-200 leading-relaxed selection:bg-emerald-900">
-                    <div id="console-output" class="whitespace-pre-wrap break-words"></div>
-                </div>
-
-                <!-- Plot Panel Content -->
-                <div id="panel-plot" class="flex-1 p-4 overflow-y-auto bg-slate-900/30 flex flex-col items-center justify-center hidden">
-                    <div id="plot-container" class="w-full h-full flex flex-col items-center justify-center text-slate-500 text-xs gap-2">
-                        <i class="fa-solid fa-chart-area text-4xl text-slate-700"></i>
-                        <p>Henüz oluşturulmuş bir grafik yok. (Matplotlib `plt.show()` çalıştırın)</p>
-                    </div>
-                </div>
-
-                <!-- Variables Explorer Panel Content -->
-                <div id="panel-vars" class="flex-1 p-4 overflow-y-auto bg-slate-950 hidden">
-                    <table class="w-full text-xs text-left text-slate-300">
-                        <thead class="text-xs uppercase bg-slate-900 text-slate-400 border-b border-slate-800">
-                            <tr>
-                                <th class="px-3 py-2">Değişken</th>
-                                <th class="px-3 py-2">Tip</th>
-                                <th class="px-3 py-2">Değer</th>
-                            </tr>
-                        </thead>
-                        <tbody id="vars-table-body" class="divide-y divide-slate-800 font-mono">
-                            <tr>
-                                <td colspan="3" class="px-3 py-4 text-center text-slate-500 italic">Henüz tanımlı değişken yok.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-
-        </main>
-    </div>
-
-    <!-- Custom Modal Input for Python input() -->
-    <div id="input-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 w-full max-w-md shadow-2xl space-y-4">
-            <h3 class="text-base font-semibold text-slate-100 flex items-center gap-2">
-                <i class="fa-solid fa-keyboard text-emerald-400"></i> Python Veri Girişi
-            </h3>
-            <p id="input-modal-prompt" class="text-sm text-slate-300 font-mono">Lütfen bir değer girin:</p>
-            <input type="text" id="input-modal-field" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-mono" placeholder="Yanıtınız...">
-            <div class="flex justify-end space-x-2">
-                <button onclick="submitModalInput()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm rounded-lg transition cursor-pointer">
-                    Gönder
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification Toast Container -->
-    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-800 border border-slate-700 text-slate-100 px-4 py-3 rounded-lg shadow-xl flex items-center space-x-3">
-        <i id="toast-icon" class="fa-solid fa-circle-info text-emerald-400"></i>
-        <span id="toast-msg" class="text-xs font-medium">Bilgilendirme</span>
-    </div>
-
-    <script>
-        let pyodide = null;
-        let editor = null;
-        let inputResolver = null;
-
-        // Python Code Examples Collection
-        const codeExamples = {
-            hello: {
-                title: "👋 Merhaba Dünya & Temeller",
-                category: "Başlangıç",
-                code: `# Python Temel Örnek
-print("PyStudio IDE'ye Hoş Geldiniz!")
-ad = "Geliştirici"
-diller = ["Python", "JavaScript", "C++", "Rust"]
-
-print(f"Merhaba {ad}! Popüler Diller:")
-for idx, dil in enumerate(diller, 1):
-    print(f"{idx}. {dil}")
-
-# Matematiksel Hesaplama
-kareler = [x**2 for x in range(1, 6)]
-print("\\n1-5 Arası Sayıların Kareleri:", kareler)
-`
-            },
-            plot: {
-                title: "📊 Matplotlib Veri Grafiği",
-                category: "Veri Bilimi",
-                code: `import matplotlib.pyplot as plt
-import numpy as np
-
-# Sinüs ve Kosinüs Dalga Grafiği
-x = np.linspace(0, 10, 100)
-y1 = np.sin(x)
-y2 = np.cos(x)
-
-plt.figure(figsize=(7, 4))
-plt.plot(x, y1, label='Sin(x)', color='#22c55e', linewidth=2)
-plt.plot(x, y2, label='Cos(x)', color='#38bdf8', linestyle='--', linewidth=2)
-
-plt.title('Sinüs & Kosinüs Grafiği', color='white', fontsize=12)
-plt.xlabel('X Ekseni', color='white')
-plt.ylabel('Y Ekseni', color='white')
-plt.grid(True, alpha=0.2)
-plt.legend()
-
-# Temayı koyu moda ayarla
-plt.gca().set_facecolor('#0f172a')
-plt.gcf().patch.set_facecolor('#1e293b')
-plt.tick_params(colors='white')
-
-plt.show()
-`
-            },
-            stats: {
-                title: "🐼 Pandas İstatistik Örneği",
-                category: "Veri Bilimi",
-                code: `import pandas as pd
-import numpy as np
-
-# Örnek Veri Seti Oluşturma
-np.random.seed(42)
-veri = {
-    'Öğrenci': ['Ahmet', 'Ayşe', 'Mehmet', 'Fatma', 'Can', 'Zeynep'],
-    'Matematik': np.random.randint(60, 100, 6),
-    'Fizik': np.random.randint(50, 95, 6),
-    'Yazılım': np.random.randint(70, 100, 6)
-}
-
-df = pd.DataFrame(veri)
-df['Ortalama'] = df[['Matematik', 'Fizik', 'Yazılım']].mean(axis=1).round(1)
-
-print("--- ÖĞRENCİ NOT TABLOSU ---")
-print(df.to_string(index=False))
-
-print("\\n--- DERS ORTALAMALARI ---")
-print(df[['Matematik', 'Fizik', 'Yazılım', 'Ortalama']].mean().round(2))
-`
-            },
-            fibonacci: {
-                title: "🌀 Rekürsif Fibonacci & Süre",
-                category: "Algoritma",
-                code: `import time
-
-def fibonacci(n):
-    if n <= 1:
-        return n
-    return fibonacci(n - 1) + fibonacci(n - 2)
-
-n = 25
-baslangic = time.time()
-sonuc = fibonacci(n)
-sure = time.time() - baslangic
-
-print(f"Fibonacci({n}) = {sonuc}")
-print(f"Hesaplama Süresi: {sure:.4f} saniye")
-`
-            },
-            game: {
-                title: "🎮 Sayı Tahmin Oyunu",
-                category: "Eğlence",
-                code: `import random
-
-hedef = random.randint(1, 20)
-print("1 ile 20 arasında bir sayı tuttum!")
-
-tahmin = int(input("Tahmininiz nedir? "))
-
-if tahmin == hedef:
-    print("🎉 Tebrikler! İlk seferde bildiniz!")
-else:
-    fark = abs(hedef - tahmin)
-    print(f"Yaklaştınız! Tuttuğum sayı: {hedef} (Fark: {fark})")
-`
-            }
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            // Initialize CodeMirror
-            const textarea = document.getElementById('code-editor');
-            editor = CodeMirror.fromTextArea(textarea, {
-                mode: 'python',
-                theme: 'dracula',
-                lineNumbers: true,
-                autoCloseBrackets: true,
-                matchBrackets: true,
-                indentUnit: 4,
-                tabSize: 4,
-                lineWrapping: true
-            });
-
-            // Set initial code
-            editor.setValue(codeExamples.hello.code);
-
-            // Update line & column info
-            editor.on('cursorActivity', () => {
-                const pos = editor.getCursor();
-                document.getElementById('editor-line-col').textContent = `Satır: ${pos.line + 1}, Sütun: ${pos.ch + 1}`;
-            });
-
-            // Keyboard Shortcut Ctrl+Enter / Cmd+Enter to Run
-            editor.setOption("extraKeys", {
-                "Ctrl-Enter": function() { runPythonCode(); },
-                "Cmd-Enter": function() { runPythonCode(); }
-            });
-
-            // Populate Examples
-            renderExamples();
-
-            // Load Pyodide Engine
-            initPyodideEngine();
-        });
-
-        async function initPyodideEngine() {
-            const statusDot = document.getElementById('py-status-dot');
-            const statusText = document.getElementById('py-status-text');
-            const runBtn = document.getElementById('run-btn');
-
-            try {
-                pyodide = await loadPyodide({
-                    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/"
-                });
-
-                // Configure Stdout / Stderr / Plotting redirects in Python
-                await pyodide.runPythonAsync(`
-import sys
-import io
-import js
-
-# Custom Standard Output Buffer
-class WebStdout(io.StringIO):
-    def write(self, s):
-        js.appendConsoleOutput(s, "stdout")
-        return len(s)
-
-class WebStderr(io.StringIO):
-    def write(self, s):
-        js.appendConsoleOutput(s, "stderr")
-        return len(s)
-
-sys.stdout = WebStdout()
-sys.stderr = WebStderr()
-
-# Custom input function interceptor
-def custom_input(prompt_text=""):
-    return js.requestUserInput(str(prompt_text))
-
-__builtins__.input = custom_input
-`);
-
-                statusDot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500";
-                statusText.textContent = "Python 3.11 Hazır";
-                runBtn.disabled = false;
-                showToast("Python WebAssembly motoru başarıyla yüklendi!", "success");
-
-            } catch (err) {
-                console.error("Pyodide Yükleme Hatası:", err);
-                statusDot.className = "w-2 h-2 rounded-full bg-red-500";
-                statusText.textContent = "Motor Yüklenemedi";
-                showToast("Python motoru başlatılamadı. Sayfayı yenileyin.", "error");
-            }
-        }
-
-        async function runPythonCode() {
-            if (!pyodide) return;
-
-            const runBtn = document.getElementById('run-btn');
-            const runIcon = document.getElementById('run-icon');
-            const runText = document.getElementById('run-btn-text');
-            const execTimeEl = document.getElementById('exec-time');
-
-            // UI Loading state
-            runBtn.disabled = true;
-            runIcon.className = "fa-solid fa-spinner fa-spin text-xs";
-            runText.textContent = "Çalışıyor...";
-            
-            // Switch to console tab
-            switchOutputTab('console');
-            
-            // Measure execution speed
-            const startTime = performance.now();
-
-            try {
-                const code = editor.getValue();
-                
-                // Auto-detect if matplotlib is used
-                if (code.includes('matplotlib') || code.includes('plt.')) {
-                    await prepareMatplotlibBackend();
-                }
-
-                // Run Python Code
-                await pyodide.runPythonAsync(code);
-
-                // Update Variable Explorer
-                updateVariablesExplorer();
-
-            } catch (err) {
-                appendConsoleOutput(`\n[Hata]: ${err.message}\n`, 'stderr');
-            } finally {
-                const duration = ((performance.now() - startTime) / 1000).toFixed(2);
-                execTimeEl.querySelector('span').textContent = `${duration}s`;
-                execTimeEl.classList.remove('hidden');
-
-                runBtn.disabled = false;
-                runIcon.className = "fa-solid fa-play text-xs";
-                runText.textContent = "Çalıştır (Ctrl+Enter)";
-            }
-        }
-
-        async function prepareMatplotlibBackend() {
-            try {
-                await pyodide.loadPackage(['matplotlib', 'numpy']);
-                await pyodide.runPythonAsync(`
-import matplotlib
-matplotlib.use('module://matplotlib.backends.html5_canvas')
-import matplotlib.pyplot as plt
-import io, base64
-
-def _custom_show():
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', dpi=120)
-    buf.seek(0)
-    img_b64 = base64.b64encode(buf.read()).decode('utf-8')
-    plt.close('all')
-    import js
-    js.renderPlotImage(img_b64)
-
-plt.show = _custom_show
-`);
-            } catch (e) {
-                console.warn("Matplotlib backend hazırlama uyarısı:", e);
-            }
-        }
-
-        function renderPlotImage(b64Data) {
-            const container = document.getElementById('plot-container');
-            container.innerHTML = `
-                <div class="relative group max-w-full">
-                    <img src="data:image/png;base64,${b64Data}" class="max-w-full rounded-lg border border-slate-700 shadow-xl" alt="Matplotlib Plot">
-                    <a href="data:image/png;base64,${b64Data}" download="plot.png" class="absolute top-2 right-2 px-3 py-1.5 bg-slate-800/90 hover:bg-slate-700 text-slate-200 text-xs rounded-md border border-slate-600 transition flex items-center gap-1">
-                        <i class="fa-solid fa-download"></i> İndir
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <a href="#anket" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-semibold text-sm transition-all duration-200 text-center shadow-lg shadow-cyan-500/20">
+                        <i class="fa-solid fa-clipboard-question mr-2"></i>Testi Başlat
+                    </a>
+                    <a href="#gemini-chat" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 transition-all duration-200 text-center">
+                        <i class="fa-solid fa-robot text-cyan-400 mr-2"></i>Siber Asistana Sor
                     </a>
                 </div>
-            `;
-            
-            // Show badge on plot tab
-            document.getElementById('plot-badge').classList.remove('hidden');
-            showToast("Grafik başarıyla oluşturuldu!", "info");
-        }
+            </div>
+        </section>
 
-        function appendConsoleOutput(text, type = "stdout") {
-            const outputDiv = document.getElementById('console-output');
-            const span = document.createElement('span');
-            
-            if (type === "stderr") {
-                span.className = "text-rose-400 font-semibold";
-            } else if (text.startsWith("-->") || text.includes("Hoş Geldiniz")) {
-                span.className = "text-emerald-400";
-            } else {
-                span.className = "text-slate-200";
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- Left Column: Mini Survey (5 Cols) -->
+            <section id="anket" class="lg:col-span-5 bg-slate-900/90 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between shadow-xl">
+                <div>
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-6">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-shield-cat text-cyan-400"></i> Tehdit Değerlendirme Anketi
+                        </h3>
+                        <span id="survey-step" class="text-xs bg-slate-800 text-slate-400 px-2 py-1 rounded-md">Soru 1 / 5</span>
+                    </div>
+
+                    <!-- Survey Form Questions Container -->
+                    <div id="survey-box" class="space-y-6">
+                        <!-- Questions injected via JS -->
+                    </div>
+
+                    <!-- Survey Result Box (Hidden by default) -->
+                    <div id="survey-result" class="hidden space-y-4">
+                        <div id="risk-badge" class="p-4 rounded-xl text-center space-y-2">
+                            <!-- JS Result Content -->
+                        </div>
+                        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs space-y-2">
+                            <h4 class="font-semibold text-cyan-400 uppercase tracking-wider">Ne Yapmalısın?</h4>
+                            <ul id="advice-list" class="list-disc list-inside text-slate-300 space-y-1">
+                                <!-- Advice injected via JS -->
+                            </ul>
+                        </div>
+                        <button onclick="resetSurvey()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition">
+                            <i class="fa-solid fa-rotate-left mr-2"></i>Testi Yeniden Çöz
+                        </button>
+                    </div>
+                </div>
+
+                <div id="survey-actions" class="mt-8 flex justify-between gap-3 pt-4 border-t border-slate-800">
+                    <button id="prev-btn" onclick="prevQuestion()" disabled class="px-4 py-2 rounded-xl bg-slate-800 text-slate-500 text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed">
+                        Önceki
+                    </button>
+                    <button id="next-btn" onclick="nextQuestion()" class="px-5 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-bold transition">
+                        Sonraki <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right Column: RAT Blocker & Scanner (7 Cols) -->
+            <section class="lg:col-span-7 space-y-6">
+                
+                <!-- RAT Blocker Status Dashboard -->
+                <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-800 mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-bug-slash text-emerald-400"></i> RAT & Truva Atı Bloke Modülü
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">Sistem bağlantılarını ve casus yazılımları pasifleştirme kalkanı</p>
+                        </div>
+                        <button id="scan-btn" onclick="startSystemScan()" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-lg shadow-emerald-500/20 transition flex items-center gap-2">
+                            <i class="fa-solid fa-microchip animate-spin-slow"></i> Sistem Taraması Başlat
+                        </button>
+                    </div>
+
+                    <!-- Protection Toggles -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div class="space-y-0.5">
+                                <p class="text-xs font-medium text-slate-300">Anti-Keylogger</p>
+                                <p class="text-[10px] text-emerald-400">Klavyeyi Koruyor</p>
+                            </div>
+                            <i class="fa-solid fa-keyboard text-slate-500 text-sm"></i>
+                        </div>
+                        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div class="space-y-0.5">
+                                <p class="text-xs font-medium text-slate-300">Port Muhafızı</p>
+                                <p class="text-[10px] text-emerald-400">Tüneller Kilitli</p>
+                            </div>
+                            <i class="fa-solid fa-network-wired text-slate-500 text-sm"></i>
+                        </div>
+                        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+                            <div class="space-y-0.5">
+                                <p class="text-xs font-medium text-slate-300">Exe Izolasyonu</p>
+                                <p class="text-[10px] text-emerald-400">Aktif Koruma</p>
+                            </div>
+                            <i class="fa-solid fa-box-archive text-slate-500 text-sm"></i>
+                        </div>
+                    </div>
+
+                    <!-- Scanner Progress Bar & Terminal Logs -->
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-xs">
+                            <span id="scan-status-text" class="text-slate-400 font-mono">Durum: Hazır (Tarama Bekleniyor)</span>
+                            <span id="scan-percentage" class="text-cyan-400 font-mono font-bold">0%</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800">
+                            <div id="scan-progress-bar" class="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full w-0 transition-all duration-300"></div>
+                        </div>
+
+                        <!-- Live Terminal Console -->
+                        <div class="bg-slate-950 rounded-xl p-4 border border-slate-800 font-mono text-xs text-slate-300 h-44 overflow-y-auto space-y-1.5" id="terminal-logs">
+                            <div class="text-slate-500">[Sistem]: SiberKalkan güvenlik modülü başlatıldı.</div>
+                            <div class="text-slate-500">[Bilgi]: RAT engelleme protokolleri devreye girdi.</div>
+                            <div class="text-slate-500">[Cihaz]: Mobil / PC ağ adaptörleri taranabilir durumda.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+        <!-- Gemini AI Chatbot Section -->
+        <section id="gemini-chat" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-purple-500 to-cyan-500 flex items-center justify-center text-white text-base">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-white">Gemini Siber Güvenlik Danışmanı</h3>
+                        <p class="text-xs text-slate-400">Panel tehditleri, virüsler ve veri güvenliği hakkında aklına takılanı sor</p>
+                    </div>
+                </div>
+                <span class="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1 rounded-full font-mono">
+                    gemini-3-flash-preview
+                </span>
+            </div>
+
+            <!-- Chat Message Window -->
+            <div id="chat-messages" class="h-64 overflow-y-auto space-y-3 p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs mb-4">
+                <div class="flex gap-3">
+                    <div class="w-7 h-7 rounded-md bg-purple-600/30 text-purple-300 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-2xl rounded-tl-none border border-slate-800 text-slate-300 max-w-xl">
+                        Merhaba! Ben sizin Siber Güvenlik Asistanınızım. Paneller, şantaj mesajları, hileli oyun dosyaları veya siber zorbalık hakkında korktuğun her şeyi bana sorabilirsin. Sana nasıl yardımcı olabilirim?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Form -->
+            <form id="chat-form" onsubmit="handleChatSubmit(event)" class="flex gap-2">
+                <input type="text" id="chat-input" placeholder="Örn: Biri Discord'dan verilerimi panelden bulduğunu söyledi, ne yapmalıyım?" 
+                       class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 transition placeholder:text-slate-600">
+                <button type="submit" id="chat-send-btn" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition flex items-center gap-2 shrink-0">
+                    <span>Gönder</span>
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </section>
+
+        <!-- Informative Emergency Section for Children -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-phone-volume"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-white">SİBERAY / Emniyet</h4>
+                    <p class="text-[11px] text-slate-400">Şantaj durumunda ebeveyninle birlikte Siberay'a başvurun.</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-white">Aileni Bilgilendir</h4>
+                    <p class="text-[11px] text-slate-400">Korkma! Ailen seni cezalandırmaz, seni korur.</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800/80 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <div>
+                    <h4 class="text-xs font-bold text-white">Engelle & Ekran Görüntüsü Al</h4>
+                    <p class="text-[11px] text-slate-400">Tehdit eden kişiye cevap verme, kanıtları saklayıp engelle.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 SiberKalkan Jr. - Teknofest İnsanlık Yararına Teknoloji Projesi</p>
+        <p class="mt-1 text-[11px]">Küçük Çocukları Siber Zorbalıktan ve Panel İnternet Tehditlerinden Koruma Ekibi</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        
+        // Survey Data Structure
+        const surveyQuestions = [
+            {
+                id: 1,
+                question: "Yakın zamanda sosyal medya veya oyun grubundan tanımadığın biri sana veya ailene tehdit savurdu mu?",
+                options: ["Evet, tehdit aldım", "Hayır, almadım", "Emin değilim"]
+            },
+            {
+                id: 2,
+                question: "Tehdit eden kişi 'Ailenin T.C. kimlik veya adres verilerini yayacağım' diyerek şantaj yaptı mı?",
+                options: ["Evet, ailem üzerinden şantaj yapıldı", "Hayır yapılmadı", "Sadece adımı söyledi"]
+            },
+            {
+                id: 3,
+                question: "Panelciler veya tanımadığın birisi sana indirmelerin için link, oyun dosyası (.exe) veya 'hile' dosyası gönderdi mi?",
+                options: ["Evet, dosya/link gönderdiler", "Hayır, hiç dosya indirmedim", "Linke tıkladım ama dosya inmedi"]
+            },
+            {
+                id: 4,
+                question: "Kullandığın cihazda (Telefon/Bilgisayar) kendi kendine açılan sekmeler veya aşırı ısınma/yavaşlama fark ettin mi?",
+                options: ["Evet, garip yavaşlama var", "Hayır, gayet normal", "Bazen oluyor"]
+            },
+            {
+                id: 5,
+                question: "Tehdit eden kişi senden para, hesap şifresi veya oyunda eşya/hesap transferi talep etti mi?",
+                options: ["Evet, para/hesap istediler", "Hayır istemediler", "Hesabımı çalmaya çalıştılar"]
             }
+        ];
 
-            span.textContent = text;
-            outputDiv.appendChild(span);
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
 
-            // Auto scroll console to bottom
-            const panel = document.getElementById('panel-console');
-            panel.scrollTop = panel.scrollHeight;
-        }
+        function renderQuestion() {
+            const box = document.getElementById("survey-box");
+            const q = surveyQuestions[currentQuestionIndex];
+            
+            document.getElementById("survey-step").innerText = `Soru ${currentQuestionIndex + 1} / ${surveyQuestions.length}`;
 
-        function clearOutput() {
-            document.getElementById('console-output').innerHTML = '';
-            document.getElementById('plot-container').innerHTML = `
-                <div class="w-full h-full flex flex-col items-center justify-center text-slate-500 text-xs gap-2">
-                    <i class="fa-solid fa-chart-area text-4xl text-slate-700"></i>
-                    <p>Henüz oluşturulmuş bir grafik yok. (Matplotlib \`plt.show()\` çalıştırın)</p>
+            let optionsHtml = q.options.map((opt, idx) => `
+                <label class="flex items-center gap-3 p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl cursor-pointer transition text-xs">
+                    <input type="radio" name="q_opt" value="${idx}" ${userAnswers[currentQuestionIndex] === idx ? 'checked' : ''} class="text-cyan-500 focus:ring-0">
+                    <span class="text-slate-200">${opt}</span>
+                </label>
+            `).join('');
+
+            box.innerHTML = `
+                <div class="space-y-3">
+                    <h4 class="text-sm font-semibold text-white leading-snug">${q.question}</h4>
+                    <div class="space-y-2 mt-3">
+                        ${optionsHtml}
+                    </div>
                 </div>
             `;
-            document.getElementById('plot-badge').classList.add('hidden');
-            showToast("Çıktı paneli temizlendi.", "info");
-        }
 
-        function requestUserInput(promptMsg) {
-            return new Promise((resolve) => {
-                inputResolver = resolve;
-                const modal = document.getElementById('input-modal');
-                const promptEl = document.getElementById('input-modal-prompt');
-                const inputField = document.getElementById('input-modal-field');
-
-                promptEl.textContent = promptMsg || "Lütfen bir değer girin:";
-                inputField.value = "";
-                modal.classList.remove('hidden');
-                setTimeout(() => inputField.focus(), 100);
-
-                // Allow Enter key submission
-                inputField.onkeydown = (e) => {
-                    if (e.key === 'Enter') submitModalInput();
-                };
-            });
-        }
-
-        function submitModalInput() {
-            const modal = document.getElementById('input-modal');
-            const inputField = document.getElementById('input-modal-field');
-            const val = inputField.value;
-
-            modal.classList.add('hidden');
-            appendConsoleOutput(`${val}\n`, 'stdout');
-
-            if (inputResolver) {
-                inputResolver(val);
-                inputResolver = null;
-            }
-        }
-
-        async function updateVariablesExplorer() {
-            if (!pyodide) return;
-
-            try {
-                const varsJson = await pyodide.runPythonAsync(`
-import json, types
-
-_result_vars = []
-for _k, _v in list(globals().items()):
-    if not _k.startswith('_') and not isinstance(_v, (types.ModuleType, types.FunctionType, type)):
-        _type_name = type(_v).__name__
-        _str_val = str(_v)
-        if len(_str_val) > 50: _str_val = _str_val[:47] + '...'
-        _result_vars.append({'name': _k, 'type': _type_name, 'value': _str_val})
-
-json.dumps(_result_vars)
-`);
-                const varList = JSON.parse(varsJson);
-                const tbody = document.getElementById('vars-table-body');
-
-                if (varList.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="3" class="px-3 py-4 text-center text-slate-500 italic">Henüz tanımlı değişken yok.</td></tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = varList.map(v => `
-                    <tr class="hover:bg-slate-900/50">
-                        <td class="px-3 py-2 font-bold text-emerald-400">${v.name}</td>
-                        <td class="px-3 py-2 text-cyan-400">${v.type}</td>
-                        <td class="px-3 py-2 text-slate-200">${escapeHtml(v.value)}</td>
-                    </tr>
-                `).join('');
-
-            } catch (e) {
-                console.warn("Değişkenler güncellenemedi:", e);
-            }
-        }
-
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-
-        async function installPackage() {
-            const input = document.getElementById('pkg-input');
-            const pkgName = input.value.trim().toLowerCase();
-            if (!pkgName) return;
-
-            showToast(`${pkgName} paketi yükleniyor...`, "info");
-            try {
-                await pyodide.loadPackage(pkgName);
-                showToast(`${pkgName} paketi başarıyla yüklendi!`, "success");
-                
-                // Add tag
-                const container = document.getElementById('installed-pkg-tags');
-                const tag = document.createElement('span');
-                tag.className = "px-2 py-1 rounded bg-slate-800 text-xs text-emerald-400 border border-slate-700";
-                tag.textContent = pkgName;
-                container.appendChild(tag);
-
-                input.value = "";
-            } catch (err) {
-                showToast(`Paket yükleme hatası: ${err.message}`, "error");
-            }
-        }
-
-        function renderExamples() {
-            const container = document.getElementById('examples-list');
-            container.innerHTML = Object.keys(codeExamples).map(key => {
-                const item = codeExamples[key];
-                return `
-                    <button onclick="loadExample('${key}')" class="w-full text-left p-2.5 rounded-lg bg-slate-800/40 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 transition group cursor-pointer">
-                        <div class="text-xs font-semibold text-slate-200 group-hover:text-emerald-400 transition">${item.title}</div>
-                        <div class="text-[10px] text-slate-400 mt-0.5">${item.category}</div>
-                    </button>
-                `;
-            }).join('');
-        }
-
-        function loadExample(key) {
-            if (codeExamples[key]) {
-                editor.setValue(codeExamples[key].code);
-                showToast(`"${codeExamples[key].title}" örneği yüklendi.`, "info");
-            }
-        }
-
-        function resetEditor() {
-            editor.setValue(codeExamples.hello.code);
-            showToast("Kod editörü varsayılana sıfırlandı.", "info");
-        }
-
-        function copyCode() {
-            const code = editor.getValue();
-            navigator.clipboard.writeText(code).then(() => {
-                showToast("Kod panoya kopyalandı!", "success");
-            });
-        }
-
-        function switchOutputTab(tabName) {
-            ['console', 'plot', 'vars'].forEach(t => {
-                document.getElementById(`panel-${t}`).classList.add('hidden');
-                const btn = document.getElementById(`out-tab-${t}`);
-                btn.className = "px-3 py-1.5 rounded-md text-slate-400 hover:text-slate-200 font-medium flex items-center gap-1.5 cursor-pointer";
-            });
-
-            document.getElementById(`panel-${tabName}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`out-tab-${tabName}`);
-            activeBtn.className = "px-3 py-1.5 rounded-md bg-slate-800 text-emerald-400 font-medium flex items-center gap-1.5 cursor-pointer";
-
-            if (tabName === 'plot') {
-                document.getElementById('plot-badge').classList.add('hidden');
-            }
-        }
-
-        function switchSidebarTab(tabName) {
-            ['examples', 'packages', 'cheatsheet'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.add('hidden');
-                const btn = document.getElementById(`tab-btn-${t}`);
-                btn.className = "flex-1 py-2 rounded-md text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 cursor-pointer";
-            });
-
-            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-            const activeBtn = document.getElementById(`tab-btn-${tabName}`);
-            activeBtn.className = "flex-1 py-2 rounded-md bg-slate-800 text-emerald-400 flex items-center justify-center gap-1.5 cursor-pointer";
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('-translate-x-full');
-        }
-
-        // Toast Helper
-        function showToast(msg, type = "info") {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toast-msg');
-            const toastIcon = document.getElementById('toast-icon');
-
-            toastMsg.textContent = msg;
-
-            if (type === "success") {
-                toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
-            } else if (type === "error") {
-                toastIcon.className = "fa-solid fa-circle-xmark text-rose-400";
+            // Button States
+            document.getElementById("prev-btn").disabled = currentQuestionIndex === 0;
+            if (currentQuestionIndex === surveyQuestions.length - 1) {
+                document.getElementById("next-btn").innerHTML = `Sonuçları Gör <i class="fa-solid fa-check ml-1"></i>`;
             } else {
-                toastIcon.className = "fa-solid fa-circle-info text-sky-400";
+                document.getElementById("next-btn").innerHTML = `Sonraki <i class="fa-solid fa-arrow-right ml-1"></i>`;
+            }
+        }
+
+        function nextQuestion() {
+            const selectedOpt = document.querySelector('input[name="q_opt"]:checked');
+            if (selectedOpt) {
+                userAnswers[currentQuestionIndex] = parseInt(selectedOpt.value);
             }
 
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+            if (currentQuestionIndex < surveyQuestions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                showSurveyResults();
+            }
         }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function showSurveyResults() {
+            document.getElementById("survey-box").classList.add("hidden");
+            document.getElementById("survey-actions").classList.add("hidden");
+            document.getElementById("survey-result").classList.remove("hidden");
+
+            const badge = document.getElementById("risk-badge");
+            const advice = document.getElementById("advice-list");
+
+            // Check if threat answers were high
+            const threatScore = userAnswers.filter(a => a === 0).length;
+
+            if (threatScore >= 2) {
+                badge.className = "p-4 rounded-xl text-center space-y-1 bg-red-500/10 border border-red-500/30 text-red-400 glow-effect-danger";
+                badge.innerHTML = `
+                    <div class="text-2xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="font-bold text-sm">Aksiyon Alınması Gereken Durum</div>
+                    <p class="text-xs text-slate-300">Tehdit veya dosya indirme şüphesi tespit edildi. Sakin ol, bu durum çözülebilir!</p>
+                `;
+                advice.innerHTML = `
+                    <li>Tehdit eden kişiyle iletişimi DERHAL kes ve engelle.</li>
+                    <li>Sohbet ve tehdit ekran görüntülerinin çıktısını veya fotoğrafını al.</li>
+                    <li>Durumu hiç vakit kaybetmeden anne, baba veya öğretmenine anlat.</li>
+                    <li>Hemen sağ taraftaki "Sistem Taraması" butonuna basarak olası RAT/Truva Atlarını temizle.</li>
+                `;
+            } else {
+                badge.className = "p-4 rounded-xl text-center space-y-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400";
+                badge.innerHTML = `
+                    <div class="text-2xl"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="font-bold text-sm">Düşük Risk Seviyesi</div>
+                    <p class="text-xs text-slate-300">Şu an için doğrudan bir tehlike görünmüyor ama tedbiri elden bırakma!</p>
+                `;
+                advice.innerHTML = `
+                    <li>Tüm sosyal medya ve oyun hesaplarında İki Faktörlü Doğrulamayı (2FA) aç.</li>
+                    <li>Tanımadığın kişilerden gelen hiçbir dosyayı veya linki açma.</li>
+                    <li>Kişisel bilgilerini (Okul, Telefon, Adres) açık alanlarda paylaşma.</li>
+                `;
+            }
+        }
+
+        function resetSurvey() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            document.getElementById("survey-box").classList.remove("hidden");
+            document.getElementById("survey-actions").classList.remove("hidden");
+            document.getElementById("survey-result").classList.add("hidden");
+            renderQuestion();
+        }
+
+
+        let isScanning = false;
+
+        function startSystemScan() {
+            if (isScanning) return;
+            isScanning = true;
+
+            const scanBtn = document.getElementById("scan-btn");
+            const progressBar = document.getElementById("scan-progress-bar");
+            const percentageText = document.getElementById("scan-percentage");
+            const statusText = document.getElementById("scan-status-text");
+            const terminal = document.getElementById("terminal-logs");
+
+            scanBtn.disabled = true;
+            scanBtn.classList.add("opacity-50", "cursor-not-allowed");
+            
+            terminal.innerHTML = `<div class="text-cyan-400">[Başlatıldı]: Cihaz siber güvenlik taraması başlatılıyor...</div>`;
+
+            let progress = 0;
+            const scanSteps = [
+                { pct: 15, log: "[Ağ]: Aktif TCP/UDP bağlantıları taranıyor...", status: "Portlar inceleniyor..." },
+                { pct: 35, log: "[İşlem]: Çalışan .exe süreçleri ve arka plan servisleri denetleniyor...", status: "Süreçler analiz ediliyor..." },
+                { pct: 55, log: "[Bellek]: Şüpheli RAT / Keylogger kanca (hook) izleri aranıyor...", status: "Truva atı tespiti yapılıyor..." },
+                { pct: 75, log: "[Karantina]: Tanımsız soket bağlantıları engellendi. Güvenlik kalkanı aktif.", status: "Kalkan uygulanıyor..." },
+                { pct: 90, log: "[Temizlik]: Muhtemel zararlı geçici dosyalar izole edildi.", status: "Son kontroller..." },
+                { pct: 100, log: "[Tamamlandı]: Cihazınız %100 güvende! Hiçbir RAT bağlantısına izin verilmedi.", status: "Tarama Tamamlandı" }
+            ];
+
+            let stepIdx = 0;
+
+            const interval = setInterval(() => {
+                if (stepIdx < scanSteps.length) {
+                    const step = scanSteps[stepIdx];
+                    progress = step.pct;
+                    progressBar.style.width = `${progress}%`;
+                    percentageText.innerText = `${progress}%`;
+                    statusText.innerText = `Durum: ${step.status}`;
+
+                    const newLog = document.createElement("div");
+                    newLog.className = progress === 100 ? "text-emerald-400 font-bold" : "text-slate-300";
+                    newLog.innerText = step.log;
+                    terminal.appendChild(newLog);
+                    terminal.scrollTop = terminal.scrollHeight;
+
+                    stepIdx++;
+                } else {
+                    clearInterval(interval);
+                    isScanning = false;
+                    scanBtn.disabled = false;
+                    scanBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                }
+            }, 900);
+        }
+
+
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const inputEl = document.getElementById("chat-input");
+            const userMsg = inputEl.value.trim();
+            if (!userMsg) return;
+
+            const messagesContainer = document.getElementById("chat-messages");
+
+            // Add User Message
+            const userMsgHtml = `
+                <div class="flex gap-3 justify-end">
+                    <div class="bg-cyan-600/30 p-3 rounded-2xl rounded-tr-none border border-cyan-500/30 text-slate-100 max-w-xl">
+                        ${escapeHtml(userMsg)}
+                    </div>
+                    <div class="w-7 h-7 rounded-md bg-cyan-600 text-white flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+            `;
+            messagesContainer.insertAdjacentHTML('beforeend', userMsgHtml);
+            inputEl.value = "";
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            // Loading indicator
+            const loadingId = 'loading-' + Date.now();
+            const loadingHtml = `
+                <div id="${loadingId}" class="flex gap-3">
+                    <div class="w-7 h-7 rounded-md bg-purple-600/30 text-purple-300 flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-robot animate-bounce"></i>
+                    </div>
+                    <div class="bg-slate-900 p-3 rounded-2xl rounded-tl-none border border-slate-800 text-slate-400 flex items-center gap-2">
+                        <i class="fa-solid fa-spinner animate-spin"></i> Gemini yanıt yazıyor...
+                    </div>
+                </div>
+            `;
+            messagesContainer.insertAdjacentHTML('beforeend', loadingHtml);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            try {
+                const responseText = await callGeminiAPI(userMsg);
+                document.getElementById(loadingId)?.remove();
+
+                const botMsgHtml = `
+                    <div class="flex gap-3">
+                        <div class="w-7 h-7 rounded-md bg-purple-600/30 text-purple-300 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-2xl rounded-tl-none border border-slate-800 text-slate-200 max-w-xl leading-relaxed whitespace-pre-wrap">
+                            ${responseText}
+                        </div>
+                    </div>
+                `;
+                messagesContainer.insertAdjacentHTML('beforeend', botMsgHtml);
+            } catch (err) {
+                document.getElementById(loadingId)?.remove();
+                const errorHtml = `
+                    <div class="flex gap-3">
+                        <div class="w-7 h-7 rounded-md bg-red-600/30 text-red-400 flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="bg-slate-900 p-3 rounded-2xl rounded-tl-none border border-red-800/50 text-red-300 max-w-xl">
+                            Üzgünüm, şu anda yanıt alınamadı. Lütfen tekrar dene veya bağlantını kontrol et.
+                        </div>
+                    </div>
+                `;
+                messagesContainer.insertAdjacentHTML('beforeend', errorHtml);
+            }
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function callGeminiAPI(userPrompt) {
+            const apiKey = ""; // Automatic key injection via context
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const systemInstruction = `
+            Sen SiberKalkan projesinin 9. sınıf öğrencileri tarafından geliştirilen Teknofest AI Siber Güvenlik Danışmanısın.
+            Ana hedefin: Panel tehditleri, verilerim çalındı korkusu, Discord/Instagram üzerinden şantaj alan veya bilgisayarına RAT/Truva atı bulaşmasından korkan çocuklara ve gençlere yardımcı olmak.
+            Yaklaşımın:
+            1. Sakinleştirici, destekleyici ve anlaşılır bir dil kullan.
+            2. Kesinlikle teknik terimleri aşırı boğmadan açıkla (Örn: "Panelcilerin çoğu İnternet üzerindeki eski sızıntıları kullanır, senin cihazını canlı izleyemezler").
+            3. Onlara somut tavsiyeler ver: Şantajcıyı engelle, ebeveynine haber ver, şifrelerini değiştir, CİMER/SİBERAY başvurusu seçeneğini hatırlat.
+            4. Cevapları çok uzun destanlar şeklinde değil, okunabilir kısa paragraflar ve maddeler halinde sun.
+            `;
+
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemInstruction }] }
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error("API isteği başarısız oldu.");
+            }
+
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || "Mevcut durumda yanıt üretilemedi.";
+        }
+
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Initialize survey on page load
+        window.onload = function() {
+            renderQuestion();
+        };
     </script>
 </body>
 </html>
